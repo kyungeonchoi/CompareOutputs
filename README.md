@@ -6,7 +6,8 @@
 
 ### Usage
 ```
-python compare_root.py <folder1> <folder2>
+from compare_TRExFitter_outputs import compare_root
+compare_root('<folder1>', '<folder2>')
 ```
 
 generates a log file `comparison_result.log`.
