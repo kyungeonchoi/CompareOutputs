@@ -6,7 +6,7 @@ import logging
 
 def compare_root(input_path_1, input_path_2):
 
-    logging.basicConfig(filename='comparison_result.log', filemode='w', format='%(levelname)s:%(message)s', level=logging.INFO)
+    logging.basicConfig(filename=f'comparison_result_{input_path_1}_and_{input_path_2}.log', filemode='w', format='%(levelname)s:%(message)s', level=logging.INFO)
 
     if not (os.path.isdir(input_path_1) and os.path.isdir(input_path_2)):
         logging.error('Input folder(s) does not exist.')
