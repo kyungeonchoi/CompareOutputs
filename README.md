@@ -10,4 +10,4 @@ from compare_TRExFitter_outputs import compare_root
 compare_root('<folder1>', '<folder2>')
 ```
 
-generates a log file `comparison_result.log`.
+generates a log file `comparison_result_<folder1>_and_<folder2>.log`.
