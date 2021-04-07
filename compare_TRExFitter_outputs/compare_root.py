@@ -8,6 +8,8 @@ def compare_root(input_path_1, input_path_2):
 
     logging.basicConfig(filename=f'comparison_result_{input_path_1}_and_{input_path_2}.log', filemode='w', format='%(levelname)s:%(message)s', level=logging.INFO)
 
+    n_warnings = 0
+
     if not (os.path.isdir(input_path_1) and os.path.isdir(input_path_2)):
         logging.error('Input folder(s) does not exist.')
         sys.exit()
@@ -26,6 +28,7 @@ def compare_root(input_path_1, input_path_2):
         logging.info('   Number of root files and the names are identical in the Histograms folder!')
     else:
         logging.warning(f'   Number of root files or name of root files are not identical in the Histogram folder')
+        n_warnings+=1
         sys.exit()
 
     # Loop over root files
@@ -35,12 +38,14 @@ def compare_root(input_path_1, input_path_2):
             f2 = ROOT.TFile.Open(f'{input_path_2}/Histograms/{file2}')
         except:
             logging.warning('   Cannot open root file...')
+            n_warnings+=1
 
         # check 2. Check number of keys in the root file
         if len(f1.GetListOfKeys()) == len(f2.GetListOfKeys()):
             logging.info(f'   Same number of keys in the root file: {file1}!')
         else:
             logging.warning(f'   Number of keys are not identical...')
+            n_warnings+=1
             sys.exit()
 
         # check 3. Check all bins of all 1-D histograms
@@ -53,6 +58,7 @@ def compare_root(input_path_1, input_path_2):
                     if h1.GetBinContent(x) and h2.GetBinContent(x): 
                         if abs(h1.GetBinContent(x) - h2.GetBinContent(x))/h1.GetBinContent(x) > 1e-10:
                             logging.warning(f'      histogram {histName} - Bin content {x} is not identical - first: {h1.GetBinContent(x)} and second: {h2.GetBinContent(x)} ...')
+                            n_warnings+=1
         f1.Close()
         f2.Close()
 
@@ -66,6 +72,7 @@ def compare_root(input_path_1, input_path_2):
         list_sys_2 = sorted(os.listdir(f'{input_path_2}/Systematics'))
     except:
         logging.warning('   Systematics folder does not exist...')
+        n_warnings+=1
         checkSystematics = False
 
     if checkSystematics:
@@ -89,7 +96,11 @@ def compare_root(input_path_1, input_path_2):
                             file2_size = os.path.getsize(f'{input_path_2}/Systematics/{folder2}/{file2}')
                             if file1_size != file2_size:
                                 logging.warning(f'      Systematic - {input_path_1}/Systematics/{folder1}/{file1} is not identical...')
+                                n_warnings+=1
                 else:
                     logging.warning(f'   Systematic - Number of files in the folder {folder1} are not identical...')
+                    n_warnings+=1
         else:
             logging.warning('   Systematic - different folders...')
+            n_warnings+=1
+    return print(f'{n_warnings} differences between {input_path_1} and {input_path_2}')
